@@ -468,7 +468,7 @@ def prompt_on_event():
 #get news feed
 @app.route('/event/newsfeed', methods=['GET'])
 def newsfeed():
-  data = response.json
+  data = request.json
   print 'mmmmeeeeee'
   apikey = data["apikey"]
   print 'nnnneeeeee'
@@ -482,7 +482,7 @@ def newsfeed():
     resp.status_code = 500
     return resp
   print 'before'
-  events = Event.query.filter_by(university_id=user.university_id).order_by(Event.enddate).limit(10).all()
+  events = Event.query.filter_by(university_id=user.university_id).order_by(Event.enddate.desc()).limit(10).all()
   print 'after'
   jsondict = {}
   jsondict["events"] = []
