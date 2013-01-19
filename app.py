@@ -3,6 +3,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
 import string
 import random
+import datetime
 
 app = Flask(__name__)
 heroku = Heroku(app)
@@ -42,7 +43,7 @@ class Event(db.Model):
   partner_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=True)
   startdate = db.Column(db.DateTime)
   enddate = db.Column(db.DateTime)
-  messagedate = db.Column(db.DateTime)
+  messagedate = db.Column(db.DateTime, nullable=True)
 
   def __init__(self, category, init_id, startdate, enddate):
     self.category = category
@@ -99,27 +100,24 @@ def update_mobile():
   try:
     db.session.commit()
     data = {
-    "apikey" : apikey
+      "apikey" : apikey
     }
     resp = jsonify(data)
     resp.status_code = 200
     return resp
   except:
     data = {
-    "apikey" : ""
+      "apikey" : ""
     }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
 
-
-
 #returns empty string if you get a db error
+#TODO: add app API authentication
 @app.route('/university/new', methods=['POST'])
 def create_uni():
-  print 'here'
   data = request.json
-  print data
   name = data["name"]
   uni = University(name)
   db.session.add(uni)
@@ -139,6 +137,41 @@ def create_uni():
     resp.status_code = 500
     return resp
 
+# creates a new event for a given user
+# TODO: fix start and end dates to cooperate
+@app.route('/event/new', methods=['POST'])
+def create_event():
+  data = request.json
+  apikey = data["apikey"]
+  initiator = Person.query.filter_by(apikey=apikey).first()
+  if initiator is None:
+    data = {
+      "apikey" : ""
+      "error" : "Could not authenticate user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  category = data["category"]
+  start = datetime.fromtimestamp(data["startdate"])
+  end = datetime.fromtimestamp(data["enddate"])
+  event = Event(category, initiator.id, start, end)
+  db.session.add(event)
+  try:
+    db.session.commit()
+    data = {
+      "apikey" : apikey,
+    }
+    resp = jsonify(data)
+    resp.status_code = 200
+    return resp
+  except:
+    data = {
+      "apikey" : ""
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
 
 if __name__ == '__main__':
     app.run()
