@@ -9,6 +9,8 @@ app = Flask(__name__)
 heroku = Heroku(app)
 db = SQLAlchemy(app)
 
+universal = os.environ['UNIVERSAL_API']
+
 def id_generator(size=32, chars=(string.ascii_uppercase + string.ascii_lowercase
   + string.digits)):
   return ''.join(random.choice(chars) for x in range(size))
@@ -58,10 +60,19 @@ class Event(db.Model):
 def index():
     return render_template('index.html')
 
-#returns empty string if there is a db error
+#returns empty string if there is a db error, or api is wrong
 @app.route('/person/new', methods=['POST'])
 def create_user():
   data = request.json
+  checkapi = data["api"]
+  if not checkapi == universal:
+    data = {
+      "apikey" : "",
+      "error" : "could not authenticate API key"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
   fbid = data["fbid"]
   uni = University.query.filter_by(name=data["name"]).first()
   apikey = id_generator()
@@ -111,10 +122,19 @@ def update_mobile():
     return resp
 
 #returns empty string if you get a db error
-#TODO: add app API authentication
+#TODO: add app API authentication. DONE
 @app.route('/university/new', methods=['POST'])
 def create_uni():
   data = request.json
+  checkapi = data["api"]
+  if not checkapi == universal:
+    data = {
+      "apikey" : "",
+      "error" : "could not authenticate API key"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
   name = data["name"]
   uni = University(name)
   db.session.add(uni)
@@ -271,11 +291,11 @@ def get_events():
     initiator = Person.query.filter_by(id = event.init_id).first()
     eventjson["init"] = initiator.fbid
     partner = Person.query.filter_by(id=event.partner_id).first()
-    if partner is not None:
+    if partner:
       eventjson["partner"] = partner.fbid
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
-    if event.messagedate is not None:
+    if event.messagedate:
       eventjson["messagedate"] = time.mktime(event.messagedate.timetuple())
     jsondict["events"].append(eventjson);
   resp = jsonify(jsondict)
@@ -346,11 +366,11 @@ def prompt_on_event():
     initiator = Person.query.filter_by(id = event.init_id).first()
     eventjson["init"] = initiator.fbid
     partner = Person.query.filter_by(id=event.partner_id).first()
-    if partner is not None:
+    if partner:
       eventjson["partner"] = partner.fbid
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
-    if event.messagedate is not None:
+    if event.messagedate:
       eventjson["messagedate"] = time.mktime(event.messagedate.timetuple())
     jsondict["events"].append(eventjson);
   resp = jsonify(jsondict)
