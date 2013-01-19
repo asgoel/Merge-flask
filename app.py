@@ -98,7 +98,6 @@ def update_mobile():
     return resp
     
   user.mobile = num
-  db.session.add(user)
   try:
     db.session.commit()
     data = {
@@ -155,13 +154,8 @@ def create_event():
     resp.status_code = 500
     return resp
   category = data["category"]
-  print 'before'
   start = datetime.fromtimestamp(int(data["startdate"]))
-  print 'middle'
-  #print start
   end = datetime.fromtimestamp(int(data["enddate"]))
-  print 'end'
-  #print end
   event = Event(category, initiator.id, initiator.university_id, start, end)
   
   db.session.add(event)
@@ -169,6 +163,39 @@ def create_event():
     db.session.commit()
     data = {
       "apikey" : apikey,
+    }
+    resp = jsonify(data)
+    resp.status_code = 200
+    return resp
+  except:
+    data = {
+      "apikey" : ""
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
+# the current user joins an event
+@app.route('/event/join', methods=['POST'])
+def join_event():
+  data = request.json
+  apikey = data["apikey"]
+  user = Person.query.filter_by(apikey=apikey).first()
+  if user is None:
+    data = {
+      "apikey" : "",
+      "error" : "Could not authenticate user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
+  event = Event.query.filter_by(id=data["event_id"]).first()
+  event.partner_id = user.id
+  try:
+    db.session.commit()
+    data = {
+      "apikey" : apikey
     }
     resp = jsonify(data)
     resp.status_code = 200
@@ -201,26 +228,25 @@ def get_events():
   jsondict["events"] = []
   for event in events:
     eventjson = {}
-    print "1"
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
-    print "2"
     eventjson["init"] = initiator.fbid
     partner = Person.query.filter_by(id=event.partner_id).first()
-    print "3"
     if partner is not None:
       eventjson["partner"] = partner.fbid
-    print "4"
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
-    print "5"
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate is not None:
       eventjson["messagedate"] = time.mktime(event.messagedate.timetuple())
-    print "6"
     jsondict["events"].append(eventjson);
-  resp = jsonify(jsondict) # no clue if this is going to work -Max
+  resp = jsonify(jsondict)
   resp.status_code = 200
   return resp
+
+# our participant text messaged the event host
+@app.route('/event/text', methods['POST'])
+def event_text():
+  
 
 if __name__ == '__main__':
     app.run(debug=True)
