@@ -57,7 +57,7 @@ def index():
 #returns empty string if there is a db error
 @app.route('/user/new', methods=['POST'])
 def create_user():
-  data = json.loads(request.json)
+  data = request.json
   fbid = data["fbid"]
   uni = University.query.filter_by(name=data["name"]).first()
   apikey = id_generator()
@@ -83,7 +83,7 @@ def create_user():
 @app.route('/university/new', methods=['POST'])
 def create_uni():
   print 'here'
-  data = json.loads(request.json)
+  data = request.json
   print data
   name = data["name"]
   uni = University(name)
