@@ -83,6 +83,7 @@ def create_user():
 @app.route('/university/new', methods=['POST'])
 def create_uni():
   data = json.loads(request.json)
+  print data
   name = data["name"]
   uni = University(name)
   db.session.add(uni)
