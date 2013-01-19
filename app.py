@@ -157,9 +157,11 @@ def create_event():
   category = data["category"]
   print 'before'
   start = datetime.fromtimestamp(data["startdate"])
-  print start
+  print 'middle'
+  #print start
   end = datetime.fromtimestamp(data["enddate"])
-  print end
+  print 'end'
+  #print end
   event = Event(category, initiator.id, initiator.university_id, start, end)
   
   db.session.add(event)
