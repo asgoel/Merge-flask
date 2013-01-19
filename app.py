@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import time
 import os
 from twilio.rest import TwilioRestClient
+import twilio.twiml
 app = Flask(__name__)
 heroku = Heroku(app)
 db = SQLAlchemy(app)
@@ -24,6 +25,7 @@ class Person(db.Model):
   mobile = db.Column(db.String(16)) # consecutive digits, no dashes / parens
   apikey = db.Column(db.String(32), unique=True)
   university_id = db.Column(db.Integer, db.ForeignKey('university.id'))
+  verified = db.Column(db.Boolean, default=False)
 
   def events():
     return Event.query.filter_by(or_(initiator=self.id, partner=self.id))
@@ -141,6 +143,63 @@ def update_mobile():
 
 #used for twilio confirmation
 @app.route('/person/twilio', methods=['POST'])
+def receive_confirmation():
+  from_number = request.values.get('From', None)
+  num = from_number[2:]
+  user = User.query.filter_by(mobile=num).first()
+  if user is None:
+    data = {
+      "error" : "could not verify number"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  body = request.values.get('Body', None)
+  if not body == "Yes":
+    data = {
+      "error" : "could not verify number"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  user.verified = True
+  db.session.add(user)
+  try:
+    db.session.commit()
+    return ""
+  except:
+    data = {
+      "error" : "could not update number"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
+@app.route('/person/verified', methods=['GET'])
+def check_confirmation():
+  data = request.json
+  apikey = data["apikey"]
+  user = User.query.filter_by(apikey=apikey).first()
+  if user is None:
+    data = {
+      "error" : "could not authenticate user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  if user.verified == True:
+    data = {
+      "error" : ""
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  data = {
+    "error" : "user is not verified"
+  }
+  resp = jsonify(data)
+  resp.status_code = 500
+  return resp
 
 #returns empty string if you get a db error
 #TODO: add app API authentication. DONE
