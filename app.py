@@ -298,5 +298,39 @@ def event_text():
     resp.status_code = 500
     return resp
 
+# return a hash of all events for which a user must be prompted on
+@app.route('/event/prompt', methods=['GET'])
+def prompt_on_event():
+  data = request.json
+  apikey = data["apikey"]
+  user = Person.query.filter_by(apikey=apikey).first()
+  if user is None:
+    data = {
+      "apikey" : "",
+      "error" : "Could not authenticate user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  events = Event.query.filter_by(partner_id=user.id, datetime.now() - messagedate > datetime.timedelta(minutes=5)).all() # remind if prompted > 5 minutes ago
+  jsondict = {}
+  jsondict["events"] = []
+  for event in events:
+    eventjson = {}
+    eventjson["category"] = event.category
+    initiator = Person.query.filter_by(id = event.init_id).first()
+    eventjson["init"] = initiator.fbid
+    partner = Person.query.filter_by(id=event.partner_id).first()
+    if partner is not None:
+      eventjson["partner"] = partner.fbid
+    eventjson["startdate"] = time.mktime(event.startdate.timetuple())
+    eventjson["enddate"] = time.mktime(event.enddate.timetuple())
+    if event.messagedate is not None:
+      eventjson["messagedate"] = time.mktime(event.messagedate.timetuple())
+    jsondict["events"].append(eventjson);
+  resp = jsonify(jsondict)
+  resp.status_code = 200
+  return resp
+  
 if __name__ == '__main__':
     app.run(debug=True)
