@@ -16,7 +16,7 @@ def id_generator(size=32, chars=(string.ascii_uppercase + string.ascii_lowercase
 class Person(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   fbid = db.Column(db.String, unique=True)
-  mobile = db.Column(db.String(9)) #9 straight digits (no dashes)
+  mobile = db.Column(db.String(16)) # consecutive digits, no dashes / parens
   apikey = db.Column(db.String(32), unique=True)
   university_id = db.Column(db.Integer, db.ForeignKey('university.id'))
 
