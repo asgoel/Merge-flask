@@ -88,6 +88,7 @@ def create_user():
   try:
     db.session.commit()
     data = {
+      "apikey" : apikey,
       "error" : ""
     }
     resp = jsonify(data)
