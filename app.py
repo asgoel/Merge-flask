@@ -327,7 +327,7 @@ def event_text():
   data = request.json
   apikey = data["apikey"]
   event = Event.query.filter_by(id=int(data["event_id"])).first()
-  if event is None:
+  if event is None or event.proposer_id is None:
     data = {
       "error" : "Could not find event"
     }
