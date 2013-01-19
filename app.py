@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, flash, render_template
+from flask import Flask, request, redirect, url_for, flash, render_template, json, jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
 import string
@@ -57,28 +57,50 @@ def index():
 #returns empty string if there is a db error
 @app.route('/user/new', methods=['POST'])
 def create_user():
-  fbid = request.args['fbid']
-  uni = University.query.filter_by(name=request.args['name']).first()
+  data = json.loads(request.json)
+  fbid = data["fbid"]
+  uni = University.query.filter_by(name=data["name"]).first()
   apikey = id_generator()
   user = User(fbid, apikey, uni)
   db.session.add(user)
   try:
     db.session.commit()
-    return user.apikey
+    data = {
+      "apikey" : apikey,
+    }
+    resp = jsonify(data)
+    resp.status_code = 200
+    return resp
   except:
-    return ""
+    data = {
+      "apikey" : "",
+    }
+    resp = jsonify(data)
+    resp.status_code = 404
+    return resp
 
 #returns empty string if you get a db error
 @app.route('/university/new', methods=['POST'])
 def create_uni():
-  name = request.args['name']
+  data = json.loads(request.json)
+  name = data["name"]
   uni = University(name)
   db.session.add(uni)
   try:
     db.session.commit()
-    return uni.name
+    data = {
+      "name" : name,
+    }
+    resp = jsonify(data)
+    resp.status_code = 200
+    return resp
   except:
-    return ""
+    data = {
+      "name" : "",
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
 
 
 if __name__ == '__main__':
