@@ -201,14 +201,22 @@ def get_events():
   jsondict["events"] = []
   for event in events:
     eventjson = {}
+    print "1"
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
+    print "2"
     eventjson["init"] = initiator.fbid
     partner = Person.qeuery.filter_by(id=event.partner_id).first()
-    eventjson["partner"] = partner.fbid
+    print "3"
+    if partner is not None:
+      eventjson["partner"] = partner.fbid
+    print "4"
     eventjson["startdate"] = event.startdate
+    print "5"
     eventjson["enddate"] = event.enddate
-    eventjson["messagedate"] = event.messagedate
+    if event.messagedate is not None:
+      eventjson["messagedate"] = event.messagedate
+    print "6"
     jsondict["events"].extend(eventjson);
   resp = jsonify(jsondict) # no clue if this is going to work -Max
   resp.status_code = 200
