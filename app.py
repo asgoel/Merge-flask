@@ -82,6 +82,7 @@ def create_user():
 #returns empty string if you get a db error
 @app.route('/university/new', methods=['POST'])
 def create_uni():
+  print 'here'
   data = json.loads(request.json)
   print data
   name = data["name"]
