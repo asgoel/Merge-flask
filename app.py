@@ -5,7 +5,7 @@ import string
 import random
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+heroku = Heroku(app)
 db = SQLAlchemy(app)
 
 def id_generator(size=32, chars=(string.ascii_uppercase + string.ascii_lowercase
