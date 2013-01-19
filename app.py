@@ -156,10 +156,10 @@ def create_event():
     return resp
   category = data["category"]
   print 'before'
-  start = datetime.fromtimestamp(data["startdate"])
+  start = datetime.fromtimestamp(int(data["startdate"]))
   print 'middle'
   #print start
-  end = datetime.fromtimestamp(data["enddate"])
+  end = datetime.fromtimestamp(int(data["enddate"]))
   print 'end'
   #print end
   event = Event(category, initiator.id, initiator.university_id, start, end)
