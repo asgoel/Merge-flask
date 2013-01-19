@@ -217,8 +217,8 @@ def get_events():
     if event.messagedate is not None:
       eventjson["messagedate"] = time.mktime(event.messagedate.timetuple())
     print "6"
-    jsondict["events"].extend(eventjson);
-  resp = jsonify(jsondict["events"][0]) # no clue if this is going to work -Max
+    jsondict["events"].append(eventjson);
+  resp = jsonify(jsondict) # no clue if this is going to work -Max
   resp.status_code = 200
   return resp
 
