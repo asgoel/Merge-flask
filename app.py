@@ -166,7 +166,10 @@ def receive_confirmation():
   db.session.add(user)
   try:
     db.session.commit()
-    return ""
+    message = "Confirmed! We hope you enjoy our service!"
+    resp = twilio.twiml.Response()
+    resp.sms(message)
+    return str(resp)
   except:
     data = {
       "error" : "could not update number"
