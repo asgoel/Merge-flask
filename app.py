@@ -312,7 +312,9 @@ def prompt_on_event():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
+  print "before the query"
   events = Event.query.filter(Event.partner_id==user.id, Event.messagedate < datetime.now() - datetime.timedelta(minutes=5)) # remind if prompted > 5 minutes ago
+  print "after the query"
   jsondict = {}
   jsondict["events"] = []
   for event in events:
