@@ -79,6 +79,41 @@ def create_user():
     resp.status_code = 500
     return resp
 
+#updates a user's phone number
+@app.route('/person/mobile', methods=['POST'])
+def update_mobile():
+  data = request.json
+  apikey = data["apikey"]
+  num = data["mobile"]
+  user = Person.query.filter_by(apikey=apikey).first()
+  if user is None:
+    data = {
+      "apikey" : ""
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+    
+  user.mobile = num
+  db.session.add(user)
+  try:
+    db.session.commit()
+    data = {
+    "apikey" : apikey
+    }
+    resp = jsonify(data)
+    resp.status_code = 200
+    return resp
+  except:
+    data = {
+    "apikey" : ""
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
+
+
 #returns empty string if you get a db error
 @app.route('/university/new', methods=['POST'])
 def create_uni():
