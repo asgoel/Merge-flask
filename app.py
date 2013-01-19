@@ -41,13 +41,15 @@ class Event(db.Model):
   category = db.Column(db.String(32))
   init_id = db.Column(db.Integer, db.ForeignKey('person.id'))
   partner_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=True)
+  university_id = db.Column(db.Integer, db.ForeignKey('university.id'))
   startdate = db.Column(db.DateTime)
   enddate = db.Column(db.DateTime)
   messagedate = db.Column(db.DateTime, nullable=True)
 
-  def __init__(self, category, init_id, startdate, enddate):
+  def __init__(self, category, init_id, university_id, startdate, enddate):
     self.category = category
     self.init_id = init_id
+    self.university_id = university_id
     self.startdate = startdate
     self.enddate = enddate
 
@@ -155,7 +157,8 @@ def create_event():
   category = data["category"]
   start = datetime.fromtimestamp(data["startdate"])
   end = datetime.fromtimestamp(data["enddate"])
-  event = Event(category, initiator.id, start, end)
+  event = Event(category, initiator.id, initiator.university_id, start, end)
+  
   db.session.add(event)
   try:
     db.session.commit()
@@ -173,5 +176,26 @@ def create_event():
     resp.status_code = 500
     return resp
 
+# grabs all events currently going on from the user's university
+@app.route('/event', methods=['GET'])
+def get_events():
+  data = request.json
+  apikey = data["apikey"]
+  user = Person.query.filter_by(apikey=apikey).first()
+  if user is None:
+    data = {
+      "apikey" : ""
+      "error" : "Could not authenticate user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  uni = user.university # is this allowed? -Max
+  events = Event.query.filter_by(university_id=uni)
+
+  resp = jsonify(events) # no clue if this is going to work -Max
+  resp.status_code = 200
+  return resp
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
