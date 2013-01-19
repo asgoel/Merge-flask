@@ -4,7 +4,7 @@ from flask_heroku import Heroku
 import string
 import random
 from datetime import datetime
-
+import time
 app = Flask(__name__)
 heroku = Heroku(app)
 db = SQLAlchemy(app)
@@ -211,11 +211,11 @@ def get_events():
     if partner is not None:
       eventjson["partner"] = partner.fbid
     print "4"
-    eventjson["startdate"] = event.startdate
+    eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     print "5"
-    eventjson["enddate"] = event.enddate
+    eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate is not None:
-      eventjson["messagedate"] = event.messagedate
+      eventjson["messagedate"] = time.mktime(event.messagedate.timetuple())
     print "6"
     jsondict["events"].extend(eventjson);
   resp = jsonify(jsondict["events"][0]) # no clue if this is going to work -Max
