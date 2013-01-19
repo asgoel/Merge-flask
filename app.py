@@ -37,5 +37,11 @@ class Event(db.Model):
 def index():
     return render_template('index.html')
 
+@app.route('/user/new', methods=['POST'])
+def create_user():
+  fbid = request.args['fbid']
+  uni = University.query.filter_by(name=request.args['name']).first()
+  apikey = id_generator()
+
 if __name__ == '__main__':
     app.run()
