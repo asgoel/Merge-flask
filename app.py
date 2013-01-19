@@ -190,8 +190,18 @@ def join_event():
     resp.status_code = 500
     return resp
 
-  event = Event.query.filter_by(id=data["event_id"]).first()
+  event = Event.query.filter_by(id=int(data["event_id"])).first()
+  if event is None:
+    data = {
+      "apikey" : "",
+      "error" : "could not find event"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
   event.partner_id = user.id
+  db.session.add(event)
   try:
     db.session.commit()
     data = {
@@ -244,12 +254,21 @@ def get_events():
   return resp
 
 # our participant text messaged the event host
-@app.route('/event/text', methods['POST'])
+@app.route('/event/text', methods=['POST'])
 def event_text():
   data = request.json
   apikey = data["apikey"]
-  event = Event.query.filter_by(id=data["event_id"]).first()
-  user = Person.query.filter_by(apikey=apikey, id=event.partner_id).first()
+  event = Event.query.filter_by(id=int(data["event_id"])).first()
+  if event is None:
+    data = {
+      "apikey" : "",
+      "error" : "Could not find event"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
+  user = Person.query.filter_by(apikey=apikey, id=int(event.partner_id)).first()
   if user is None:
     data = {
       "apikey" : "",
@@ -260,6 +279,7 @@ def event_text():
     return resp
 
   event.messagedate = datetime.now()
+  db.session.add(event)
   try:
     db.session.commit()
     data = {
