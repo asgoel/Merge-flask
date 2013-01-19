@@ -3,7 +3,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
 import string
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 app = Flask(__name__)
 heroku = Heroku(app)
@@ -337,7 +337,7 @@ def prompt_on_event():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
-  events = Event.query.filter(Event.partner_id==user.id, Event.messagedate < datetime.now() - datetime.timedelta(minutes=5)) # remind if prompted > 5 minutes ago
+  events = Event.query.filter(Event.partner_id==user.id, Event.messagedate < datetime.now() - timedelta(minutes=5)) # remind if prompted > 5 minutes ago
   jsondict = {}
   jsondict["events"] = []
   for event in events:
