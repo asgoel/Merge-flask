@@ -98,7 +98,7 @@ def update_mobile():
     return resp
     
   user.mobile = num
-  db.session.add(mobile)
+  db.session.add(user)
   try:
     db.session.commit()
     data = {
