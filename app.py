@@ -370,7 +370,7 @@ def get_events():
     resp.status_code = 500
     return resp
   category = data["category"]
-  events = Event.query.filter_by(university_id=user.university_id, category=category).all()
+  events = Event.query.filter_by(university_id=user.university_id, category=category).filter(Event.partner_id == None).all()
   jsondict = {}
   jsondict["events"] = []
   for event in events:
@@ -378,10 +378,10 @@ def get_events():
     eventjson["id"] = str(event.id)
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
-    eventjson["init"] = initiator.fbid
+    eventjson["init_id"] = initiator.fbid
     partner = Person.query.filter_by(id=event.partner_id).first()
     if partner:
-      eventjson["partner"] = partner.fbid
+      eventjson["partner_id"] = partner.fbid
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate:
@@ -469,11 +469,8 @@ def prompt_on_event():
 @app.route('/event/newsfeed', methods=['GET'])
 def newsfeed():
   data = request.json
-  print 'mmmmeeeeee'
   apikey = data["apikey"]
-  print 'nnnneeeeee'
   user = Person.query.filter_by(apikey=apikey).first()
-  print 'before check'
   if user is None:
     data = {
       "error" : "Could not authenticate user"
@@ -481,19 +478,17 @@ def newsfeed():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
-  print 'before'
-  events = Event.query.filter_by(university_id=user.university_id).order_by(Event.enddate.desc()).limit(10).all()
-  print 'after'
+  events = Event.query.filter_by(university_id=user.university_id).filter(Event.partner_id != None).order_by(Event.enddate.desc()).limit(10).all()
   jsondict = {}
   jsondict["events"] = []
   for event in events:
     eventjson = {}
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
-    eventjson["init"] = initiator.fbid
+    eventjson["init_id"] = initiator.fbid
     partner = Person.query.filter_by(id=event.partner_id).first()
     if partner:
-      eventjson["partner"] = partner.fbid
+      eventjson["partner_id"] = partner.fbid
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate:
