@@ -60,9 +60,8 @@ def create_user():
   data = request.json
   fbid = data["fbid"]
   uni = University.query.filter_by(name=data["name"]).first()
-  print uni
   apikey = id_generator()
-  user = User(fbid, apikey, uni)
+  user = User(fbid, apikey, uni.id)
   db.session.add(user)
   try:
     db.session.commit()
