@@ -33,7 +33,7 @@ class Person(db.Model):
 
 class University(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  name = db.Column(db.String)
+  name = db.Column(db.String, unique=True)
   users = db.relationship('Person', backref='university', lazy='dynamic')
 
   def __init__(self, name):
@@ -65,7 +65,7 @@ def index():
 @app.route('/person/new', methods=['POST'])
 def create_user():
   data = request.json
-  checkapi = data["api"]
+  checkapi = data["apikey"]
   if not checkapi == universal:
     data = {
       "apikey" : "",
@@ -76,6 +76,14 @@ def create_user():
     return resp
   fbid = data["fbid"]
   uni = University.query.filter_by(name=data["name"]).first()
+  if uni is None:
+    data = {
+      "apikey" : "",
+      "error" : "could not find University"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
   apikey = id_generator()
   user = Person(fbid, apikey, uni.id)
   db.session.add(user)
@@ -127,7 +135,7 @@ def update_mobile():
 @app.route('/university/new', methods=['POST'])
 def create_uni():
   data = request.json
-  checkapi = data["api"]
+  checkapi = data["apikey"]
   if not checkapi == universal:
     data = {
       "apikey" : "",
