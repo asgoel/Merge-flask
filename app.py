@@ -469,8 +469,11 @@ def prompt_on_event():
 @app.route('/event/newsfeed', methods=['GET'])
 def newsfeed():
   data = response.json
+  print 'mmmmeeeeee'
   apikey = data["apikey"]
+  print 'nnnneeeeee'
   user = Person.query.filter_by(apikey=apikey).first()
+  print 'before check'
   if user is None:
     data = {
       "error" : "Could not authenticate user"
