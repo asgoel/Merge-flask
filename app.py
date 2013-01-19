@@ -68,7 +68,6 @@ def create_user():
   checkapi = data["apikey"]
   if not checkapi == universal:
     data = {
-      "apikey" : "",
       "error" : "could not authenticate API key"
     }
     resp = jsonify(data)
@@ -78,7 +77,6 @@ def create_user():
   uni = University.query.filter_by(name=data["name"]).first()
   if uni is None:
     data = {
-      "apikey" : "",
       "error" : "could not find University"
     }
     resp = jsonify(data)
@@ -90,13 +88,15 @@ def create_user():
   try:
     db.session.commit()
     data = {
-      "apikey" : apikey,
+      "error" : ""
     }
     resp = jsonify(data)
     resp.status_code = 200
     return resp
   except:
-    data = {}
+    data = {
+      "error" : "could not create user"
+    }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -109,7 +109,9 @@ def update_mobile():
   num = data["mobile"]
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
-    data = {}
+    data = {
+      "error" : "could not find user"
+    }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -119,13 +121,15 @@ def update_mobile():
   try:
     db.session.commit()
     data = {
-      "apikey" : apikey
+      "error" : ""
     }
     resp = jsonify(data)
     resp.status_code = 200
     return resp
   except:
-    data = {}
+    data = {
+      "error" : "could not update mobile"
+    }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -138,7 +142,6 @@ def create_uni():
   checkapi = data["apikey"]
   if not checkapi == universal:
     data = {
-      "apikey" : "",
       "error" : "could not authenticate API key"
     }
     resp = jsonify(data)
@@ -150,13 +153,15 @@ def create_uni():
   try:
     db.session.commit()
     data = {
-      "name" : name,
+      "error" : ""
     }
     resp = jsonify(data)
     resp.status_code = 200
     return resp
   except:
-    data = {}
+    data = {
+      "error" : "could not create university"
+    }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -170,7 +175,6 @@ def create_event():
   initiator = Person.query.filter_by(apikey=apikey).first()
   if initiator is None:
     data = {
-      "apikey" : "",
       "error" : "Could not authenticate user"
     }
     resp = jsonify(data)
@@ -185,13 +189,15 @@ def create_event():
   try:
     db.session.commit()
     data = {
-      "apikey" : apikey,
+      "error" : ""
     }
     resp = jsonify(data)
     resp.status_code = 200
     return resp
   except:
-    data = {}
+    data = {
+      "error" : "could not create event"
+    }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -224,13 +230,15 @@ def propose_join():
   try:
     db.session.commit()
     data = {
-      "apikey" : apikey
+      "error" : ""
     }
     resp = jsonify(data)
     resp.status_code = 200
     return resp
   except:
-    data = {}
+    data = {
+      "error" : "could not add proposed user"
+    }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -264,13 +272,15 @@ def join_event():
   try:
     db.session.commit()
     data = {
-      "apikey" : apikey
+      "error" : ""
     }
     resp = jsonify(data)
     resp.status_code = 200
     return resp
   except:
-    data = {}
+    data = {
+      "error" : "could not join event"
+    }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -283,7 +293,6 @@ def get_events():
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
-      "apikey" : "",
       "error" : "Could not authenticate user"
     }
     resp = jsonify(data)
@@ -319,7 +328,6 @@ def event_text():
   event = Event.query.filter_by(id=int(data["event_id"])).first()
   if event is None:
     data = {
-      "apikey" : "",
       "error" : "Could not find event"
     }
     resp = jsonify(data)
@@ -329,7 +337,6 @@ def event_text():
   user = Person.query.filter_by(apikey=apikey, id=int(event.proposer_id)).first()
   if user is None:
     data = {
-      "apikey" : "",
       "error" : "Could not authenticate user"
     }
     resp = jsonify(data)
@@ -341,13 +348,15 @@ def event_text():
   try:
     db.session.commit()
     data = {
-      "apikey" : apikey
+      "error" : ""
     }
     resp = jsonify(data)
     resp.status_code = 200
     return resp
   except:
-    data = {}
+    data = {
+      "error" : "could not add message info"
+    }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -360,7 +369,6 @@ def prompt_on_event():
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
-      "apikey" : "",
       "error" : "Could not authenticate user"
     }
     resp = jsonify(data)
