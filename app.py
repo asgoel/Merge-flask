@@ -75,9 +75,7 @@ def create_user():
     resp.status_code = 200
     return resp
   except:
-    data = {
-      "apikey" : "",
-    }
+    data = {}
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -90,9 +88,7 @@ def update_mobile():
   num = data["mobile"]
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
-    data = {
-      "apikey" : ""
-    }
+    data = {}
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -108,9 +104,7 @@ def update_mobile():
     resp.status_code = 200
     return resp
   except:
-    data = {
-      "apikey" : ""
-    }
+    data = {}
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -132,9 +126,7 @@ def create_uni():
     resp.status_code = 200
     return resp
   except:
-    data = {
-      "name" : "",
-    }
+    data = {}
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -169,9 +161,7 @@ def create_event():
     resp.status_code = 200
     return resp
   except:
-    data = {
-      "apikey" : ""
-    }
+    data = {}
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -184,7 +174,6 @@ def join_event():
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
-      "apikey" : "",
       "error" : "Could not authenticate user"
     }
     resp = jsonify(data)
@@ -194,8 +183,7 @@ def join_event():
   event = Event.query.filter_by(id=int(data["event_id"])).first()
   if event is None:
     data = {
-      "apikey" : "",
-      "error" : "could not find event"
+      "error" : "Could not find event"
     }
     resp = jsonify(data)
     resp.status_code = 500
@@ -212,9 +200,7 @@ def join_event():
     resp.status_code = 200
     return resp
   except:
-    data = {
-      "apikey" : ""
-    }
+    data = {}
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -291,9 +277,7 @@ def event_text():
     resp.status_code = 200
     return resp
   except:
-    data = {
-      "apikey" : ""
-    }
+    data = {}
     resp = jsonify(data)
     resp.status_code = 500
     return resp
@@ -312,7 +296,7 @@ def prompt_on_event():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
-  events = Event.query.filter(Event.partner_id==user.id, Event.messagedate < datetime.now()) # remind if prompted > 5 minutes ago
+  events = Event.query.filter(Event.partner_id==user.id, Event.messagedate > datetime.now()) # remind if prompted > 5 minutes ago
   jsondict = {}
   jsondict["events"] = []
   for event in events:
