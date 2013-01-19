@@ -218,7 +218,7 @@ def get_events():
       eventjson["messagedate"] = event.messagedate
     print "6"
     jsondict["events"].extend(eventjson);
-  resp = jsonify(jsondict) # no clue if this is going to work -Max
+  resp = jsonify(jsondict["events"][0]) # no clue if this is going to work -Max
   resp.status_code = 200
   return resp
 
