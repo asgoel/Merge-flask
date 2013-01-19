@@ -246,7 +246,35 @@ def get_events():
 # our participant text messaged the event host
 @app.route('/event/text', methods['POST'])
 def event_text():
-  
+  data = request.json
+  apikey = data["apikey"]
+  event = Event.query.filter_by(id=data["event_id"]).first()
+  user = Person.query.filter_by(apikey=apikey, id=event.partner_id).first()
+  if user is None:
+    data = {
+      "apikey" : "",
+      "error" : "Could not authenticate user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
+  event.messagedate = datetime.now()
+  try:
+    db.session.commit()
+    data = {
+      "apikey" : apikey
+    }
+    resp = jsonify(data)
+    resp.status_code = 200
+    return resp
+  except:
+    data = {
+      "apikey" : ""
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
 
 if __name__ == '__main__':
     app.run(debug=True)
