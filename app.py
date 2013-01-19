@@ -3,7 +3,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
 import string
 import random
-import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 heroku = Heroku(app)
