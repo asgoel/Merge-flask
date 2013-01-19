@@ -148,7 +148,7 @@ def create_event():
   initiator = Person.query.filter_by(apikey=apikey).first()
   if initiator is None:
     data = {
-      "apikey" : ""
+      "apikey" : "",
       "error" : "Could not authenticate user"
     }
     resp = jsonify(data)
@@ -176,7 +176,7 @@ def create_event():
     resp.status_code = 500
     return resp
 
-# grabs all events currently going on from the user's university
+# grabs all events currently going on from the user's university in a given category
 @app.route('/event', methods=['GET'])
 def get_events():
   data = request.json
@@ -184,16 +184,28 @@ def get_events():
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
-      "apikey" : ""
+      "apikey" : "",
       "error" : "Could not authenticate user"
     }
     resp = jsonify(data)
     resp.status_code = 500
     return resp
-  uni = user.university # is this allowed? -Max
-  events = Event.query.filter_by(university_id=uni)
-
-  resp = jsonify(events) # no clue if this is going to work -Max
+  category = data["category"]
+  events = Event.query.filter_by(university_id=user.university_id, category=category).all()
+  jsondict = {}
+  jsondict["events"] = []
+  for event in events:
+    eventjson = {}
+    eventjson["category"] = event.category
+    initiator = Person.query.filter_by(id = event.init_id).first()
+    eventjson["init"] = initiator.fbid
+    partner = Person.qeuery.filter_by(id=event.partner_id).first()
+    eventjson["partner"] = partner.fbid
+    eventjson["startdate"] = event.startdate
+    eventjson["enddate"] = event.enddate
+    eventjson["messagedate"] = event.messagedate
+    jsondict["events"].extend(eventjson);
+  resp = jsonify(jsondict) # no clue if this is going to work -Max
   resp.status_code = 200
   return resp
 
