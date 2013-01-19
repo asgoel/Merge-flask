@@ -478,7 +478,9 @@ def newsfeed():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
-  events = Event.query.filter(Event.university_id==user.university_id).order_by(Event.enddate.desc()).limit(10).all()
+  print 'before'
+  events = Event.query.filter_by(university_id=user.university_id).order_by(Event.enddate).limit(10).all()
+  print 'after'
   jsondict = {}
   jsondict["events"] = []
   for event in events:
