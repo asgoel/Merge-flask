@@ -155,8 +155,11 @@ def create_event():
     resp.status_code = 500
     return resp
   category = data["category"]
+  print 'before'
   start = datetime.fromtimestamp(data["startdate"])
+  print start
   end = datetime.fromtimestamp(data["enddate"])
+  print end
   event = Event(category, initiator.id, initiator.university_id, start, end)
   
   db.session.add(event)
