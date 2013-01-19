@@ -6,12 +6,14 @@ import random
 from datetime import datetime, timedelta
 import time
 import os
+from twilio.rest import TwilioRestClient
 app = Flask(__name__)
 heroku = Heroku(app)
 db = SQLAlchemy(app)
 
 universal = os.environ['UNIVERSAL_API']
-
+account_sid = "AC32798c5f8600bb6d158e63181eb705e1"
+auth_token = "3ba6672b64fb89178bfeaef60ce34061"
 def id_generator(size=32, chars=(string.ascii_uppercase + string.ascii_lowercase
   + string.digits)):
   return ''.join(random.choice(chars) for x in range(size))
@@ -115,8 +117,7 @@ def update_mobile():
     }
     resp = jsonify(data)
     resp.status_code = 500
-    return resp
-    
+    return resp  
   user.mobile = num
   db.session.add(user)
   try:
@@ -126,6 +127,9 @@ def update_mobile():
     }
     resp = jsonify(data)
     resp.status_code = 200
+    client = TwilioRestClient(account_sid, auth_token)
+    message = client.sms.messages.create(body="Welcome to Merge! Please text back 'Yes' to confirm", to="+1"+num,
+      from_="+15616669720")
     return resp
   except:
     data = {
@@ -134,6 +138,9 @@ def update_mobile():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
+
+#used for twilio confirmation
+@app.route('/person/twilio', methods=['POST'])
 
 #returns empty string if you get a db error
 #TODO: add app API authentication. DONE
@@ -394,6 +401,8 @@ def prompt_on_event():
   resp = jsonify(jsondict)
   resp.status_code = 200
   return resp
+
+
   
 if __name__ == '__main__':
     app.run(debug=True)
