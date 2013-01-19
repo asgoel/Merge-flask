@@ -206,7 +206,7 @@ def get_events():
     initiator = Person.query.filter_by(id = event.init_id).first()
     print "2"
     eventjson["init"] = initiator.fbid
-    partner = Person.qeuery.filter_by(id=event.partner_id).first()
+    partner = Person.query.filter_by(id=event.partner_id).first()
     print "3"
     if partner is not None:
       eventjson["partner"] = partner.fbid
