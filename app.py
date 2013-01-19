@@ -147,7 +147,7 @@ def receive_confirmation():
   print 'here'
   from_number = request.values.get('From', None)
   print 'here2'
-  user = User.query.filter_by(mobile=from_number).first()
+  user = Person.query.filter_by(mobile=from_number).first()
   if user is None:
     data = {
       "error" : "could not verify number"
@@ -183,7 +183,7 @@ def receive_confirmation():
 def check_confirmation():
   data = request.json
   apikey = data["apikey"]
-  user = User.query.filter_by(apikey=apikey).first()
+  user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
       "error" : "could not authenticate user"
