@@ -40,7 +40,7 @@ class Event(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   category = db.Column(db.String(32))
   init_id = db.Column(db.Integer, db.ForeignKey('person.id'))
-  proposer_id = db.Column(db.Integer, db.ForeignKey('person.id', nullable=True)
+  proposer_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=True)
   partner_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=True)
   university_id = db.Column(db.Integer, db.ForeignKey('university.id'))
   startdate = db.Column(db.DateTime)
