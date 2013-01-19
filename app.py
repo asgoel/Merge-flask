@@ -239,6 +239,7 @@ def get_events():
   jsondict["events"] = []
   for event in events:
     eventjson = {}
+    eventjson["id"] = str(event.id)
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
     eventjson["init"] = initiator.fbid
