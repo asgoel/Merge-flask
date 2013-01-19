@@ -1,6 +1,9 @@
 from flask import Flask, request, redirect, url_for, flash, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
+import string
+import random
+
 app = Flask(__name__)
 heroku = Heroku(app)
 db = SQLAlchemy(app)
@@ -66,7 +69,7 @@ def create_user():
     return ""
 
 #returns empty string if you get a db error
-@app.route('university/new', methods=['POST'])
+@app.route('/university/new', methods=['POST'])
 def create_uni():
   name = request.args['name']
   uni = University(name)
