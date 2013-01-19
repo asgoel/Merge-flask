@@ -40,6 +40,7 @@ class Event(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   category = db.Column(db.String(32))
   init_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+  proposer_id = db.Column(db.Integer, db.ForeignKey('person.id', nullable=True)
   partner_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=True)
   university_id = db.Column(db.Integer, db.ForeignKey('university.id'))
   startdate = db.Column(db.DateTime)
@@ -166,6 +167,45 @@ def create_event():
     resp.status_code = 500
     return resp
 
+# the current user proposes to join an event
+@app.route('/event/propose', methods=['POST'])
+def propose_join():
+  data = request.json
+  apikey = data["apikey"]
+  user = Person.query.filter_by(apikey=apikey).first()
+  if user is None:
+    data = {
+      "error" : "Could not authenticate user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
+  event = Event.query.filter_by(id=int(data["event_id"])).first()
+  if event is None:
+    data = {
+      "error" : "Could not find event"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
+  event.proposer_id = user.id
+  db.session.add(event)
+  try:
+    db.session.commit()
+    data = {
+      "apikey" : apikey
+    }
+    resp = jsonify(data)
+    resp.status_code = 200
+    return resp
+  except:
+    data = {}
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+
 # the current user joins an event
 @app.route('/event/join', methods=['POST'])
 def join_event():
@@ -190,6 +230,7 @@ def join_event():
     return resp
 
   event.partner_id = user.id
+  event.proposer_id = None
   db.session.add(event)
   try:
     db.session.commit()
@@ -256,7 +297,7 @@ def event_text():
     resp.status_code = 500
     return resp
 
-  user = Person.query.filter_by(apikey=apikey, id=int(event.partner_id)).first()
+  user = Person.query.filter_by(apikey=apikey, id=int(event.proposer_id)).first()
   if user is None:
     data = {
       "apikey" : "",
@@ -296,7 +337,7 @@ def prompt_on_event():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
-  events = Event.query.filter(Event.partner_id==user.id, Event.messagedate < (datetime.now() - datetime.timedelta(minutes=5))) # remind if prompted > 5 minutes ago
+  events = Event.query.filter(Event.partner_id==user.id, Event.messagedate < datetime.now() - datetime.timedelta(minutes=5)) # remind if prompted > 5 minutes ago
   jsondict = {}
   jsondict["events"] = []
   for event in events:
