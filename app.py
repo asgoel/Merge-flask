@@ -76,7 +76,7 @@ def create_user():
       "apikey" : "",
     }
     resp = jsonify(data)
-    resp.status_code = 404
+    resp.status_code = 200
     return resp
 
 #returns empty string if you get a db error
@@ -99,7 +99,7 @@ def create_uni():
       "name" : "",
     }
     resp = jsonify(data)
-    resp.status_code = 500
+    resp.status_code = 200
     return resp
 
 
