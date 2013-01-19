@@ -465,7 +465,38 @@ def prompt_on_event():
   resp.status_code = 200
   return resp
 
-
+#get news feed
+@app.route('/event/newsfeed', methods=['GET'])
+def newsfeed():
+  data = response.json
+  apikey = data["apikey"]
+  user = Person.query.filter_by(apikey=apikey).first()
+  if user is None:
+    data = {
+      "error" : "Could not authenticate user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  events = Event.query.filter(university_id = user.university_id).order_by(desc(Event.enddate)).limit(10).all()
+  jsondict = {}
+  jsondict["events"] = []
+  for event in events:
+    eventjson = {}
+    eventjson["category"] = event.category
+    initiator = Person.query.filter_by(id = event.init_id).first()
+    eventjson["init"] = initiator.fbid
+    partner = Person.query.filter_by(id=event.partner_id).first()
+    if partner:
+      eventjson["partner"] = partner.fbid
+    eventjson["startdate"] = time.mktime(event.startdate.timetuple())
+    eventjson["enddate"] = time.mktime(event.enddate.timetuple())
+    if event.messagedate:
+      eventjson["messagedate"] = time.mktime(event.messagedate.timetuple())
+    jsondict["events"].append(eventjson);
+  resp = jsonify(jsondict)
+  resp.status_code = 200
+  return resp
   
 if __name__ == '__main__':
     app.run(debug=True)
