@@ -130,7 +130,7 @@ def update_mobile():
     resp = jsonify(data)
     resp.status_code = 200
     client = TwilioRestClient(account_sid, auth_token)
-    message = client.sms.messages.create(body="Welcome to Merge! Please text back 'Yes' to confirm", to="+1"+num,
+    message = client.sms.messages.create(body="Welcome to Merge! Please text back 'Yes' to confirm", to=num,
       from_="+15616669720")
     return resp
   except:
@@ -144,9 +144,10 @@ def update_mobile():
 #used for twilio confirmation
 @app.route('/person/twilio', methods=['POST'])
 def receive_confirmation():
+  print 'here'
   from_number = request.values.get('From', None)
-  num = from_number[2:]
-  user = User.query.filter_by(mobile=num).first()
+  print 'here2'
+  user = User.query.filter_by(mobile=from_number).first()
   if user is None:
     data = {
       "error" : "could not verify number"
