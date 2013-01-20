@@ -124,6 +124,7 @@ def get_user():
   jsondict = {}
   jsondict["id"] = str(user.id)
   jsondict["fbid"] = user.fbid
+  jsondict["name"] = user.name
   jsondict["mobile"] = user.mobile
   jsondict["university_id"] = str(user.university_id)
   jsondict["verified"] = str(user.verified)
@@ -408,6 +409,8 @@ def get_events():
     print "initialized"
     initJSON["id"] = str(initiator.id)
     print "id"
+    initJSON["name"] = "test" # initiator.name
+    print "name"
     initjSON["fbid"] = initiator.fbid
     print "fbid"
     initjSON["mobile"] = initiator.mobile
