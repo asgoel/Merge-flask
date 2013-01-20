@@ -122,14 +122,11 @@ def get_user():
     resp.status_code = 500
     return resp
   jsondict = {}
-  print "start"
   jsondict["id"] = str(user.id)
   jsondict["fbid"] = user.fbid
   jsondict["mobile"] = user.mobile
-  print "uni"
   jsondict["university_id"] = str(user.university_id)
   jsondict["verified"] = str(user.verified)
-  print "end"
   resp = jsonify(jsondict)
   resp.status_code = 200
   return resp
@@ -406,10 +403,13 @@ def get_events():
     eventjson["id"] = str(event.id)
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
-    eventjson["init_id"] = initiator.fbid
-    partner = Person.query.filter_by(id=event.partner_id).first()
-    if partner:
-      eventjson["partner_id"] = partner.fbid
+    initJSON = {}
+    initJSON["id"] = str(initiator.id)
+    initjSON["fbid"] = initiator.fbid
+    initjSON["mobile"] = initiator.mobile
+    initjSON["university_id"] = str(initiator.university_id)
+    initJSON["verified"] = str(initiator.verified)
+    eventjson["initiator"] = initJSON
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate:
@@ -513,10 +513,22 @@ def newsfeed():
     eventjson = {}
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
-    eventjson["init_id"] = initiator.fbid
+    initJSON = {}
+    initJSON["id"] = str(initiator.id)
+    initjSON["fbid"] = initiator.fbid
+    initjSON["mobile"] = initiator.mobile
+    initjSON["university_id"] = str(initiator.university_id)
+    initJSON["verified"] = str(initiator.verified)
+    eventjson["initiator"] = initJSON
     partner = Person.query.filter_by(id=event.partner_id).first()
     if partner:
-      eventjson["partner_id"] = partner.fbid
+      partJSON = {}
+      partJSON["id"] = str(partner.id)
+      partjSON["fbid"] = partner.fbid
+      partjSON["mobile"] = partner.mobile
+      partjSON["university_id"] = str(partner.university_id)
+      partJSON["verified"] = str(partner.verified)
+      eventjson["partner"] = partJSON
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate:
