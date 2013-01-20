@@ -122,10 +122,14 @@ def get_user():
     resp.status_code = 500
     return resp
   jsondict = {}
+  print "start"
   jsondict["id"] = str(user.id)
   jsondict["fbid"] = user.fbid
   jsondict["mobile"] = user.mobile
+  print "uni"
   jsondict["university_id"] = str(user.university_id)
+  jsondict["verified"] = str(user.verified)
+  print "end"
   resp = jsonify(jsondict)
   resp.status_code = 200
   return resp
