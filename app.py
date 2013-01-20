@@ -411,9 +411,9 @@ def get_events():
     print "id"
     initJSON["name"] = str(initiator.name)
     print "name"
-    initjSON["fbid"] = initiator.fbid
+    initjSON["fbid"] = str(initiator.fbid)
     print "fbid"
-    initjSON["mobile"] = initiator.mobile
+    initjSON["mobile"] = str(initiator.mobile)
     print "mobile"
     initjSON["university_id"] = str(initiator.university_id)
     print "university_id"
