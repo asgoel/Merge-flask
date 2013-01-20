@@ -409,7 +409,7 @@ def get_events():
     initjSON["mobile"] = initiator.mobile
     initjSON["university_id"] = str(initiator.university_id)
     initJSON["verified"] = str(initiator.verified)
-    eventjson["initiator"] = initJSON
+    #eventjson["initiator"] = initJSON
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate:
