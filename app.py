@@ -22,6 +22,7 @@ def id_generator(size=32, chars=(string.ascii_uppercase + string.ascii_lowercase
 class Person(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   fbid = db.Column(db.String, unique=True)
+  name = db.Column(db.String(128)) # user's name on Facebook
   mobile = db.Column(db.String(16)) # consecutive digits, no dashes / parens
   apikey = db.Column(db.String(32), unique=True)
   university_id = db.Column(db.Integer, db.ForeignKey('university.id'))
@@ -30,8 +31,9 @@ class Person(db.Model):
   def events():
     return Event.query.filter_by(or_(initiator=self.id, partner=self.id))
 
-  def __init__(self, fbid, apikey, university_id):
+  def __init__(self, fbid, name, apikey, university_id):
     self.fbid = fbid
+    self.name = name
     self.apikey = apikey
     self.university_id = university_id
 
@@ -78,7 +80,7 @@ def create_user():
     resp.status_code = 500
     return resp
   fbid = data["fbid"]
-  uni = University.query.filter_by(name=data["name"]).first()
+  uni = University.query.filter_by(name=data["university"]).first()
   if uni is None:
     data = {
       "error" : "could not find University"
@@ -87,7 +89,7 @@ def create_user():
     resp.status_code = 500
     return resp
   apikey = id_generator()
-  user = Person(fbid, apikey, uni.id)
+  user = Person(fbid, data["name"], apikey, uni.id)
   db.session.add(user)
   try:
     db.session.commit()
@@ -105,6 +107,28 @@ def create_user():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
+
+# grabs user based on API key
+@app.route('/person', methods=['GET'])
+def get_user():
+  data = request.json
+  apikey = data["apikey"]
+  user = Person.query.filter_by(apikey=apikey).first()
+  if user is None:
+    data = {
+      "error" : "could not find user"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  jsondict = {}
+  jsondict["id"] = str(user.id)
+  jsondict["fbid"] = user.fbid
+  jsondict["mobile"] = user.mobile
+  jsondict["university_id"] = str(user.university_id)
+  resp = jsonify(jsondict)
+  resp.status_code = 200
+  return resp
 
 #updates a user's phone number
 @app.route('/person/mobile', methods=['POST'])
