@@ -408,6 +408,7 @@ def join_event():
 # grabs all events currently going on from the user's university in a given category
 @app.route('/event/<apikey>/<category>', methods=['GET'])
 def get_events():
+  print "hits"
   #data = request.args # data = request.json
   #apikey = data['apikey']
   user = Person.query.filter_by(apikey=apikey).first()
