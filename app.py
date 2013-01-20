@@ -263,6 +263,29 @@ def create_uni():
     resp.status_code = 500
     return resp
 
+@app.route('/university/all', methods=['GET'])
+def all_unis():
+  data = request.json
+  checkapi = data["apikey"]
+  if not checkapi == universal:
+    data = {
+      "error" : "could not authenticate API key"
+    }
+    resp = jsonify(data)
+    resp.status_code = 500
+    return resp
+  unis = University.query.all()
+  jsondict = {}
+  jsondict["unis"] = []
+  for uni in unis:
+    unijson = {}
+    unijson["name"] = uni.name
+    unijson["id"] = str(uni.id)
+    jsondict["unis"].append(unijson);
+  resp = jsonify(jsondict)
+  resp.status_code = 200
+  return resp
+
 # creates a new event for a given user
 # TODO: fix start and end dates to cooperate
 @app.route('/event/new', methods=['POST'])
@@ -409,7 +432,7 @@ def get_events():
     print "initialized"
     initjson["id"] = str(initiator.id)
     initjson["name"] = initiator.name
-    initjson["fbid"] = initiator.fbid
+    initjson["fbid"] = cinitiator.fbid
     initjson["mobile"] = initiator.mobile
     initjson["university_id"] = str(initiator.university_id)
     initjson["verified"] = str(initiator.verified)
