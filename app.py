@@ -432,7 +432,7 @@ def get_events():
     print "initialized"
     initjson["id"] = str(initiator.id)
     initjson["name"] = initiator.name
-    initjson["fbid"] = cinitiator.fbid
+    initjson["fbid"] = initiator.fbid
     initjson["mobile"] = initiator.mobile
     initjson["university_id"] = str(initiator.university_id)
     initjson["verified"] = str(initiator.verified)
