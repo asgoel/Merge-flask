@@ -402,14 +402,6 @@ def get_events():
     eventjson = {}
     eventjson["id"] = str(event.id)
     eventjson["category"] = event.category
-    initiator = Person.query.filter_by(id = event.init_id).first()
-    initJSON = {}
-    initJSON["id"] = str(initiator.id)
-    initjSON["fbid"] = initiator.fbid
-    initjSON["mobile"] = initiator.mobile
-    initjSON["university_id"] = str(initiator.university_id)
-    initJSON["verified"] = str(initiator.verified)
-    #eventjson["initiator"] = initJSON
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate:
