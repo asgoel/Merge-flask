@@ -370,7 +370,7 @@ def get_events():
     resp.status_code = 500
     return resp
   category = data["category"]
-  events = Event.query.filter_by(university_id=user.university_id, category=category).filter(Event.partner_id == None).all()
+  events = Event.query.filter_by(university_id=user.university_id, category=category).filter(Event.partner_id == None, Event.enddate > datetime.now())
   jsondict = {}
   jsondict["events"] = []
   for event in events:
