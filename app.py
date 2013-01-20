@@ -402,17 +402,18 @@ def get_events():
     eventjson = {}
     eventjson["id"] = str(event.id)
     eventjson["category"] = event.category
-    print "before query"
     initiator = Person.query.filter_by(id = event.init_id).first()
-    print "after query"
     initJSON = {}
-    print "after initialization"
     initJSON["id"] = str(initiator.id)
+    print "id"
     initjSON["fbid"] = initiator.fbid
+    print "fbid"
     initjSON["mobile"] = initiator.mobile
+    print "mobile"
     initjSON["university_id"] = str(initiator.university_id)
+    print "university_id"
     initJSON["verified"] = str(initiator.verified)
-    print "before set"
+    print "verified"
     eventjson["initiator"] = initJSON
     print "after set"
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
