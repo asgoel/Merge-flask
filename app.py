@@ -109,10 +109,10 @@ def create_user():
     return resp
 
 # grabs user based on API key
-@app.route('/person', methods=['GET'])
-def get_user():
-  data = request.json
-  apikey = data["apikey"]
+@app.route('/person/<apikey>', methods=['GET'])
+def get_user(apikey):
+  #data = request.json
+  #apikey = data["apikey"]
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
@@ -205,10 +205,10 @@ def receive_confirmation():
     resp.status_code = 500
     return resp
 
-@app.route('/person/verified', methods=['GET'])
-def check_confirmation():
-  data = request.json
-  apikey = data["apikey"]
+@app.route('/person/verified/<apikey>', methods=['GET'])
+def check_confirmation(apikey):
+  #data = request.json
+  #apikey = data["apikey"]
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
@@ -263,10 +263,10 @@ def create_uni():
     resp.status_code = 500
     return resp
 
-@app.route('/university/all', methods=['GET'])
-def all_unis():
-  data = request.json
-  checkapi = data["apikey"]
+@app.route('/university/all/<apikey>', methods=['GET'])
+def all_unis(apikey):
+  #data = request.json
+  checkapi = apikey
   if not checkapi == universal:
     data = {
       "error" : "could not authenticate API key"
@@ -488,10 +488,10 @@ def event_text():
     return resp
 
 # return a hash of all events for which a user must be prompted on
-@app.route('/event/prompt', methods=['GET'])
-def prompt_on_event():
-  data = request.json
-  apikey = data["apikey"]
+@app.route('/event/prompt/<apikey>', methods=['GET'])
+def prompt_on_event(apikey):
+  #data = request.json
+  #apikey = data["apikey"]
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
@@ -521,10 +521,10 @@ def prompt_on_event():
   return resp
 
 #get news feed
-@app.route('/event/newsfeed', methods=['GET'])
+@app.route('/event/newsfeed/<apikey>', methods=['GET'])
 def newsfeed():
-  data = request.json
-  apikey = data["apikey"]
+  #data = request.json
+  #apikey = data["apikey"]
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
