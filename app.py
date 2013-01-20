@@ -405,23 +405,15 @@ def get_events():
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
     print "about to initialize"
-    initJSON = {}
+    initjson = {}
     print "initialized"
-    initJSON["id"] = str(initiator.id)
-    print "id"
-    initJSON["name"] = str(initiator.name)
-    print "name"
-    #initjSON["fbid"] = str(initiator.fbid)
-    print "fbid"
-    #initjSON["mobile"] = str(initiator.mobile)
-    testvar = initiator.university_id
-    print "mobile"
-    initjSON["university_id"] = str(initiator.university_id)
-    print "university_id"
-    initJSON["verified"] = str(initiator.verified)
-    print "verified"
-    eventjson["initiator"] = initJSON
-    print "after set"
+    initjson["id"] = str(initiator.id)
+    initjson["name"] = initiator.name
+    initjson["fbid"] = initiator.fbid
+    initjson["mobile"] = initiator.mobile
+    initjson["university_id"] = str(initiator.university_id)
+    initjson["verified"] = str(initiator.verified)
+    eventjson["initiator"] = initjson
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
     if event.messagedate:
@@ -525,21 +517,23 @@ def newsfeed():
     eventjson = {}
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
-    initJSON = {}
-    initJSON["id"] = str(initiator.id)
-    initjSON["fbid"] = initiator.fbid
-    initjSON["mobile"] = initiator.mobile
-    initjSON["university_id"] = str(initiator.university_id)
-    initJSON["verified"] = str(initiator.verified)
-    eventjson["initiator"] = initJSON
+    initjson = {}
+    initjson["id"] = str(initiator.id)
+    initjson["name"] = initiator.name
+    initjson["fbid"] = initiator.fbid
+    initjson["mobile"] = initiator.mobile
+    initjson["university_id"] = str(initiator.university_id)
+    initjson["verified"] = str(initiator.verified)
+    eventjson["initiator"] = initjson
     partner = Person.query.filter_by(id=event.partner_id).first()
     if partner:
-      partJSON = {}
-      partJSON["id"] = str(partner.id)
-      partjSON["fbid"] = partner.fbid
-      partjSON["mobile"] = partner.mobile
-      partjSON["university_id"] = str(partner.university_id)
-      partJSON["verified"] = str(partner.verified)
+      partjson = {}
+      partjson["id"] = str(partner.id)
+      partjson["name"] = partner.name
+      partjson["fbid"] = partner.fbid
+      partjson["mobile"] = partner.mobile
+      partjson["university_id"] = str(partner.university_id)
+      partjson["verified"] = str(partner.verified)
       eventjson["partner"] = partJSON
     eventjson["startdate"] = time.mktime(event.startdate.timetuple())
     eventjson["enddate"] = time.mktime(event.enddate.timetuple())
