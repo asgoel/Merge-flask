@@ -403,7 +403,9 @@ def get_events():
     eventjson["id"] = str(event.id)
     eventjson["category"] = event.category
     initiator = Person.query.filter_by(id = event.init_id).first()
+    print "about to initialize"
     initJSON = {}
+    print "initialized"
     initJSON["id"] = str(initiator.id)
     print "id"
     initjSON["fbid"] = initiator.fbid
