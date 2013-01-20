@@ -411,13 +411,13 @@ def get_events():
     print "id"
     initJSON["name"] = str(initiator.name)
     print "name"
-    initjSON["fbid"] = str(initiator.fbid)
+    #initjSON["fbid"] = str(initiator.fbid)
     print "fbid"
-    initjSON["mobile"] = str(initiator.mobile)
+    #initjSON["mobile"] = str(initiator.mobile)
     print "mobile"
-    initjSON["university_id"] = str(initiator.university_id)
+    #initjSON["university_id"] = str(initiator.university_id)
     print "university_id"
-    initJSON["verified"] = str(initiator.verified)
+    #initJSON["verified"] = str(initiator.verified)
     print "verified"
     eventjson["initiator"] = initJSON
     print "after set"
