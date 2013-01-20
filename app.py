@@ -406,10 +406,10 @@ def join_event():
     return resp
 
 # grabs all events currently going on from the user's university in a given category
-@app.route('/event', methods=['GET'])
+@app.route('/event/<apikey>/<category>', methods=['GET'])
 def get_events():
-  data = request.args # data = request.json
-  apikey = data['apikey']
+  #data = request.args # data = request.json
+  #apikey = data['apikey']
   user = Person.query.filter_by(apikey=apikey).first()
   if user is None:
     data = {
@@ -418,7 +418,7 @@ def get_events():
     resp = jsonify(data)
     resp.status_code = 500
     return resp
-  category = data["category"]
+  #category = data["category"]
   events = Event.query.filter_by(university_id=user.university_id, category=category).filter(Event.partner_id == None, Event.enddate > datetime.now())
   jsondict = {}
   jsondict["events"] = []
